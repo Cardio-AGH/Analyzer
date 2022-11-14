@@ -1,7 +1,7 @@
 # Analyzer
 Akademicki projekt analizatora EKG realizowanego na przedmiocie "Dedykowane algorytmy diagnostyki medycznej"
 
-### Uruchamianie
+### Onboarding
 https://gist.github.com/haircut/14705555d58432a5f01f9188006a04ed
 ```python
 Pip3 install django  
