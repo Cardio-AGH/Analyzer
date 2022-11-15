@@ -44,11 +44,18 @@ class WavFileDetailsView(TemplateView):
         context['mean'] = np.mean(flatten_data)
         context['std'] = np.std(flatten_data)
 
-        # TODO Tutaj robimy przekształceia danych do kolejnych wykresów 
-        #context['data_labels_2'] = data
-        #context['data_2'] = data
 
+
+        # TODO Tutaj robimy przekształceia danych do kolejnych wykresów 
+
+        #flatten_data = np.convolve(flatten_data, np.ones(6)/6, mode='valid')
+        context['data_2'] = flatten_data#flatten_data[0:100]
+        context['data_labels_2'] = [round(i,2) for i in range(len(flatten_data))]
+        print(len(flatten_data), len([round(i,2) for i in range(len(flatten_data))]))
         return context
+
+
+
 
 class WavlistView(TemplateView):
     template_name = "wav_list.html"
