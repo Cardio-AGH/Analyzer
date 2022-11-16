@@ -1,6 +1,4 @@
-import os
 import numpy as np
-import json
 import wfdb
 from typing import Tuple
 
