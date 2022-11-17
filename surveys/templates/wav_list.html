@@ -1,15 +1,22 @@
+{% extends "base.html" %}
+{% load static %}
 
 
+{% block link %}
+     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+     <link rel="stylesheet" href="{% static 'css/wav_list.css' %}"/>
+{% endblock %}
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+{% block content %}
 
-<h1>WAV files list</h1>
-<a href="{% url 'survey_fill' %}" class="btn btn-outline-primary">Dodj nowy plik</a></li>
+<h1>Dostępne pliki</h1>
+<div class="cotainer-file-list"> 
+     {% for i in wavs %}
+     <li class="list-group-item">Nazwa: {{i.sample_text}}    
+          <a href="{% url 'wav_details' i.pk %}" class="btn btn-outline-primary">Otworz plik</a>
+     </li> 
+     {% endfor %}
+</div>
 
+{% endblock %}
 
-{% for i in wavs %}
-
-<li class="list-group-item">Title: {{i.sample_text}}    
-     <a href="{% url 'wav_details' i.pk %}" class="btn btn-outline-primary">Pokaż plik</a></li> 
-
-{% endfor %}

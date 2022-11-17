@@ -1,0 +1,53 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Aplikacja do przetwarzania i analizy sygnału EKG</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="{% static 'css/base.css' %}"/>
+    {% block link %}{% endblock %}
+
+</head>
+<body>
+    <header class="header">
+        <div class="container-1">
+            <a href="/">Aplikacja do przetwarzania i analizy sygnału EKG</a>
+            <div class="page-nav-list">
+                <ul>
+                    <li><a href="/">Strona główna</a></li>
+                    <li><a href="{% url 'survey_fill' %}">Dodaj nowy plik</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+    <div class="page-border"></div>
+    <div class="page-border-2"></div>
+
+    <main class ="container-2">
+        <div class="page-about">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+    <footer>
+        <div class="container-footer">
+            <div class="page-footer">
+                <div class="page-border-2"></div>
+                <div class="page-border"></div>
+                <div class="page-footer-border"></div>
+                <div class="page-footer-1">
+                    <div class="page-footer-logo">
+                        <p>Aplikacja do przetwarzania i analizy sygnału EKG</p>
+                    </div>
+                    <div class="page-footer-info">
+                        <p>Grupa projektowa 1</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

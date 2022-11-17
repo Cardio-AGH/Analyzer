@@ -1,23 +1,49 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block link %}
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link rel="stylesheet" href="{% static 'css/wav_details.css' %}"/>
+  {% endblock %}
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+{% block content %}
 
-
-<div class="m-4 card card-body">
- 
-<h1>STATS</h1>
-
-
-<div class="card card-body">
-średnia: {{mean}} 
-<br>
-Odchylenie standardowe: {{std}}
+<div class="container-file-details">
+  <div class="m-4 card card-body">
+    <h1 style="text-align: center;">Plik TEST1 {{ Survey.sample_text }}</h1>
+    <!-- <div class="card card-body">
+      średnia: {{mean}} 
+      <br>
+      Odchylenie standardowe: {{std}}
+    </div> -->
+    <div class="container-modules-buttons">
+      <div class="modules-buttons">
+        <div class="button">
+          <div>Moduł 1</div>
+        </div>
+        <div class="button">
+          <div>Moduł 2</div>
+        </div>
+        <div class="button">
+          <div>Moduł 3</div>
+        </div>
+        <div class="button">
+          <div>Moduł 4</div>
+        </div>
+        <div class="button">
+          <div>Moduł 5</div>
+        </div>
+        <div class="button">
+          <div>Moduł 6</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <canvas id="myChart" class="col-12" style="height: 400px;"></canvas>
+  <canvas id="myChart2" class="col-12" style="height: 400px;"></canvas>
 </div>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<canvas id="myChart" class="col-12" style="height: 400px;"></canvas>
-
-<canvas id="myChart2" class="col-12" style="height: 400px;"></canvas>
 
 
 <script>
@@ -48,6 +74,8 @@ const myChart2 = new Chart(ctx2, {
   },
 });
 </script>
+
+{% endblock %}
 
 
 

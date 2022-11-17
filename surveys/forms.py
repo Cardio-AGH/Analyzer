@@ -12,4 +12,4 @@ class SurveyForm(forms.ModelForm):
 
     class Meta:
         model = Survey
-        fields = ["sample_text", "sample_bool", 'wav_file']
+        fields = ["sample_text", 'wav_file']
