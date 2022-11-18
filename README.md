@@ -2,7 +2,7 @@
 Akademicki projekt analizatora EKG realizowanego na przedmiocie "Dedykowane algorytmy diagnostyki medycznej"
 
 ## Onboarding
-[Install and use pip on macOS ](https://gist.github.com/haircut/14705555d58432a5f01f9188006a04ed)
+[How to install and use pip on macOS ](https://gist.github.com/haircut/14705555d58432a5f01f9188006a04ed)
 ```python
 pip3 install django  
 pip3 install scipy
