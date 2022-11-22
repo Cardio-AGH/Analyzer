@@ -1,0 +1,9 @@
+.cotainer-file-list {
+    width: 80%;
+}
+
+.list-group-item{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}

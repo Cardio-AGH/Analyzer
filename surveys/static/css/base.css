@@ -1,0 +1,156 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+	font-family: 'Poppins', sans-serif;
+    overflow-x: hidden;
+    margin: 0 auto;
+}
+
+.header {
+    background-color: #F7F7F7;
+}
+
+.container-1{
+    width: 96%;
+    margin: 0 auto;
+}
+
+.header .container-1{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 85px;
+    position: sticky;
+}
+
+.container-1 a{
+    text-transform: uppercase;
+    text-decoration: none;
+    color: #000000;
+    font-weight: 600;
+    font-size: 28px;
+    letter-spacing: 1px;
+}
+
+.container-1 a:hover{
+    text-decoration: none;
+    color: #99D5FF;
+}
+
+.page-nav-list{
+    display: flex;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.page-nav-list ul{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+
+.page-nav-list li{
+    list-style-type: none;
+    margin-left: 30px;
+    text-decoration: none;
+}
+
+.page-nav-list a{
+    text-transform: uppercase;
+    text-decoration: none;
+    color: #000000;
+    font-weight: 800;
+    font-size: 12px;
+    letter-spacing: 1px;
+}
+
+.page-nav-list a:hover{
+    color: #99D5FF;
+    text-decoration: none;
+}
+
+.container-2{
+    width: 100%;
+    margin: 0 auto;
+}
+
+.page-border{
+    width: 100%;
+    height: 3px;
+    background-color: #000;
+}
+
+.page-border-2{
+    width: 100%;
+    height: 8px;
+    background-color: #99D5FF;
+}
+
+.page-about{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.page-about h1{
+    margin-bottom: 60px;
+    margin-top: 60px;
+    font-weight: 500;
+    font-size: 40px;
+    letter-spacing: 2px;
+}
+
+
+
+
+.container-footer{
+    width: 100%;
+    height: 120px;
+    margin: 0 auto;
+    background-color: #F7F7F7;
+}
+
+.page-footer{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 90px;
+}
+
+.page-footer-border{
+    width: 90%;
+    height: 2px;
+    background-color: #000;
+    margin-top: 28px;
+}
+
+.page-footer-1 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 90%;
+}
+
+.page-footer-logo{
+    margin-top: 15px;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: #000000;
+    font-weight: 600;
+    font-size: 18px;
+}
+
+.page-footer-info{
+    margin-top: 15px;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+
+
+
+
+
