@@ -25,6 +25,8 @@ sudo make altinstall
 pip3 install django  
 pip3 install scipy
 pip3 install django-crispy-forms
+pip3 install wfdb
+mkdir static
 python3 ./manage.py makemigrations
 python3 ./manage.py migrate
 python3 manage.py runserver
