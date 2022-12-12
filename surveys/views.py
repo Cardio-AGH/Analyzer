@@ -11,6 +11,8 @@ from surveys.models import Survey
 import numpy as np
 from scipy.fft import fft, ifft, fftfreq
 
+from ecg_baseline import BaselineECG
+
 class WavFileAdd(TemplateView, FormView):
     success_url = reverse_lazy('wav_list')
     template_name = "survey_form.html"
@@ -77,13 +79,12 @@ class WavlistView(TemplateView):
         context['wavs'] = Survey.objects.all()
 
 
-        data = load_data("twa00.hea")
-        print(data)
-
-        algorytm1 = 'WywołanieAlgorytmu1'
-        algorytm2 = 'WywołanieAlgorytmu2'
-        algorytm3 = 'WywołanieAlgorytmu3'
-        algorytm4 = 'WywołanieAlgorytmu4'
+        data_dict, data = load_data("twa00.hea")
+        baseline = BaselineECG(data, data_dict)
+        algorytm1 = baseline.moving_average(10)
+        algorytm2 = baseline.butterworth_filter([5, 30])
+        algorytm3 = baseline.sav_goal_filter(10)
+        algorytm4 = 'Algorytm4'
 
         context['data'] = data
         context['algorytm1'] = algorytm1

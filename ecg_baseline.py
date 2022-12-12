@@ -33,8 +33,8 @@ class BaselineECG:
         Returns:
             np.ndarray data with filtered values.
         """
-        b_butter, a_butter = signal.butter(self.N, Wn, self.fs, btype="high")
-        return signal.filtfilt(b_butter, a_butter, self.data)
+        b_butter, a_butter = signal.butter(self.N, Wn, 'bandpass', fs=self.fs)
+        return signal.filtfilt(b_butter, a_butter, self.data, )
 
     def sav_goal_filter(self, window_length):
         """Function filtering input data with Savitzky-Golay filter.
@@ -47,7 +47,7 @@ class BaselineECG:
         """
         return signal.savgol_filter(self.data, window_length, 3)
 
-    def lms_filter(self, filtered_data, n, target):
+    def lms_filter(self, filtered_data, n):
         """Function filtering input data with LMS filter. To use this filter the input data should be
         filtered by simple low-pass filter. (https://matousc89.github.io/padasip/sources/filters/lms.html)
 
@@ -59,7 +59,14 @@ class BaselineECG:
         Returns:
             np.ndarray data with filtered values.
         """
-        filter = pa.filters.FilterLMS(n)
-        target += self.data
-        y, _, _ = filter.run(target, filtered_data)
+        # filter = pa.filters.FilterLMS(n, mu=0.1)
+        # pred = filter.predict(self.data)
+        # # pred = pred[:len(filtered_data)]
+        # # print(len(pred), len(filtered_data))
+        # y, _, _ = filter.run(pred, filtered_data)
+        x = filtered_data # input matrix
+        v = np.random.normal(0, 0.1, n)  # noise
+        d = x + v
+        f = pa.filters.FilterLMS(n=4, mu=0.1, w="random")
+        y, e, w = f.run(d, x)
         return y
