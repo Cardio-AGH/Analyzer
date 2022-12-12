@@ -4,7 +4,7 @@ Akademicki projekt analizatora EKG realizowanego na przedmiocie "Dedykowane algo
 
 ## Onboarding
 <!-- [How to install and use pip on macOS ](https://gist.github.com/haircut/14705555d58432a5f01f9188006a04ed) -->
-[Automatic installation](https://mamba.readthedocs.io/en/latest/installation.html)
+[Automatic installation - mamba](https://mamba.readthedocs.io/en/latest/installation.html)
 
 ```sh
 micromamba create -n "test" python=3.10 -c conda-forge
