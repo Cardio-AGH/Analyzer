@@ -24,6 +24,7 @@ sudo make altinstall
 ```python
 pip3 install django  
 pip3 install scipy
+pip3 install django-crispy-forms
 python3 ./manage.py makemigrations
 python3 ./manage.py migrate
 python3 manage.py runserver
