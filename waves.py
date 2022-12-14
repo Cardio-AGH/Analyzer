@@ -7,30 +7,31 @@ class Waves:
     Class with methods which find characteristic points of ECG signal. It returns dictionary.
     """
 
-    def __init__(self, data):
+    def __init__(self, data, rpeaks):
         self.data = data
+        self.rpeaks = rpeaks
 
     def waves_gradient(self):
         first_deriv = np.gradient(self.data)  # 1st derivative
         second_deriv = np.gradient(self.data)  # 2nd derivative
         return first_deriv, second_deriv
 
-    def find_qrs_onsets(self, Rpeaks, i, deriv_2):
-        _, _, _, quarter4 = np.array_split(deriv_2[Rpeaks[i]:Rpeaks[i + 1]],4)  # first derivative from ech_baseline split in 4
+    def find_qrs_onsets(self, iter, deriv_2):
+        _, _, _, quarter4 = np.array_split(deriv_2[self.rpeaks[iter]:self.rpeaks[iter + 1]],4)  # first derivative from ech_baseline split in 4
         try:
             QRSon = quarter4
             QRSon = np.where(QRSon[:np.argmin(QRSon)] < 0)[0][-2]
-            QRSon = Rpeaks[i + 1] - len(quarter4) + QRSon
+            QRSon = self.rpeaks[iter + 1] - len(quarter4) + QRSon
         except:
             return
         return int(QRSon)
 
-    def find_qrs_offsets(self, Rpeaks, i, deriv_2):
-        quarter1, _, _, _ = np.array_split(deriv_2[Rpeaks[i]:Rpeaks[i + 1]],4)  # first derivative from ech_baseline split in 4
+    def find_qrs_offsets(self, iter, deriv_2):
+        quarter1, _, _, _ = np.array_split(deriv_2[self.rpeaks[iter]:self.rpeaks[iter + 1]],4)  # first derivative from ech_baseline split in 4
         QRSoff = quarter1
         try:
-            half1, half2 = np.array_split(self.data[Rpeaks[i]:Rpeaks[i + 1]], 2)
-            R1 = Rpeaks[i]
+            half1, half2 = np.array_split(self.data[self.rpeaks[iter]:self.rpeaks[iter + 1]], 2)
+            R1 = self.rpeaks[iter]
 
             S, _ = scipy.signal.find_peaks(-half1)
             if S.shape[0] != 0:
@@ -44,8 +45,8 @@ class Waves:
             return
         return int(QRSoff)
 
-    def find_t_offsets(self, Rpeaks, i, deriv_1, deriv_2, QRSoff):
-        half1, _ = np.array_split(self.data[Rpeaks[i]:Rpeaks[i + 1]], 2)  # ecg_baseline between 2 R peaks split in half
+    def find_t_offsets(self, iter, deriv_1, deriv_2, QRSoff):
+        half1, _ = np.array_split(self.data[self.rpeaks[iter]:self.rpeaks[iter + 1]], 2)  # ecg_baseline between 2 R peaks split in half
         try:
             region = self.data[QRSoff:QRSoff + len(half1)]
             T, _ = scipy.signal.find_peaks(region)
@@ -57,7 +58,7 @@ class Waves:
                 return
         except:
             return
-        quarter1, _, _, _ = np.array_split(deriv_2[Rpeaks[i]:Rpeaks[i + 1]],4)  # first derivative from ech_baseline split in 4
+        quarter1, _, _, _ = np.array_split(deriv_2[self.rpeaks[iter]:self.rpeaks[iter + 1]],4)  # first derivative from ech_baseline split in 4
         try:
             dif_max, _ = scipy.signal.find_peaks(-deriv_1[T:T + len(quarter1)])
             if dif_max.shape[0] != 0:
@@ -69,22 +70,22 @@ class Waves:
             return
         return int(Toffset)
 
-    def find_p_peaks(self, Rpeaks, i):
-        gauss_half1, gauss_half2 = np.array_split(self.data[Rpeaks[i]:Rpeaks[i + 1]], 2)
+    def find_p_peaks(self, iter):
+        gauss_half1, gauss_half2 = np.array_split(self.data[self.rpeaks[iter]:self.rpeaks[iter + 1]], 2)
         try:
             P, _ = scipy.signal.find_peaks(gauss_half2)
             if P.shape[0] != 0:
                 Pmax_index = np.argmax(gauss_half2[P])
                 P = P[Pmax_index]
-                P = Rpeaks[i] + len(gauss_half1) + P
+                P = self.rpeaks[iter] + len(gauss_half1) + P
             else:
                 return
         except:
             return
         return int(P)
 
-    def find_p_onsets(self, Rpeaks, i, deriv_1, P):
-        half1, _ = np.array_split(self.data[Rpeaks[i]:Rpeaks[i + 1]], 2)  # ecg_baseline between 2 R peaks split in half
+    def find_p_onsets(self, iter, deriv_1, P):
+        half1, _ = np.array_split(self.data[self.rpeaks[iter]:self.rpeaks[iter + 1]], 2)  # ecg_baseline between 2 R peaks split in half
         try:
             dif_max, _ = scipy.signal.find_peaks(deriv_1[len(half1):P])
             if dif_max.shape[0] != 0:
@@ -110,13 +111,13 @@ class Waves:
 
     def delete_empty(self, lista):
         lista_result = []
-        for i in lista:
-            if i is not None:
-                lista_result.append(i)
+        for iter in lista:
+            if iter is not None:
+                lista_result.append(iter)
 
         return np.array(lista_result)
 
-    def main(self, Rpeaks):
+    def main(self):
         ECG_QRS_Onsets = []
         ECG_QRS_Offsets = []
         ECG_P_Onsets = []
@@ -125,12 +126,12 @@ class Waves:
 
         deriv_1, deriv_2 = self.waves_gradient()
 
-        for i, _ in enumerate(Rpeaks[:-1]):
-            QRSoff = self.find_qrs_offsets(Rpeaks, i, deriv_2)
-            QRSon = self.find_qrs_onsets(Rpeaks, i, deriv_2)
-            Toff = self.find_t_offsets(Rpeaks, i, deriv_1, deriv_2, QRSoff)
-            P = self.find_p_peaks(Rpeaks, i)
-            Pon = self.find_p_onsets(Rpeaks, i, deriv_1, P)
+        for iter, _ in enumerate(self.rpeaks[:-1]):
+            QRSoff = self.find_qrs_offsets(iter, deriv_2)
+            QRSon = self.find_qrs_onsets(iter, deriv_2)
+            Toff = self.find_t_offsets(iter, deriv_1, deriv_2, QRSoff)
+            P = self.find_p_peaks(iter)
+            Pon = self.find_p_onsets(iter, deriv_1, P)
             Poff = self.find_p_offsets(deriv_1, P, QRSon)
 
             ECG_QRS_Offsets.append(QRSoff)
