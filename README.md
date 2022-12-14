@@ -26,6 +26,7 @@ pip3 install django
 pip3 install scipy
 pip3 install django-crispy-forms
 pip3 install wfdb
+pip3 install padasip
 mkdir static
 python3 ./manage.py makemigrations
 python3 ./manage.py migrate
