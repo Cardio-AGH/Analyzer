@@ -11,6 +11,8 @@ from surveys.models import Survey
 import numpy as np
 from scipy.fft import fft, ifft, fftfreq
 
+from ecg_baseline import BaselineECG
+
 class WavFileAdd(TemplateView, FormView):
     success_url = reverse_lazy('wav_list')
     template_name = "survey_form.html"
@@ -56,6 +58,18 @@ class WavFileDetailsView(TemplateView):
 
 
 
+import numpy as np
+import wfdb
+from typing import Tuple
+
+def load_data(path: str) -> Tuple[dict, np.array]:
+  path = path.strip('.hea')
+  data_dict = wfdb.rdheader(path).__dict__
+  data_array = np.ravel(wfdb.rdrecord(path, physical=True, channels=[0]).adc())
+
+  return data_dict, data_array
+
+
 
 class WavlistView(TemplateView):
     template_name = "wav_list.html"
@@ -63,4 +77,19 @@ class WavlistView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(WavlistView, self).get_context_data(**kwargs)
         context['wavs'] = Survey.objects.all()
+
+
+        data_dict, data = load_data("twa00.hea")
+        baseline = BaselineECG(data, data_dict)
+        algorytm1 = baseline.moving_average(10)
+        algorytm2 = baseline.butterworth_filter([5, 30])
+        algorytm3 = baseline.sav_goal_filter(10)
+        algorytm4 = 'Algorytm4'
+
+        context['data'] = data
+        context['algorytm1'] = algorytm1
+        context['algorytm2'] = algorytm2
+        context['algorytm3'] = algorytm3
+        context['algorytm4'] = algorytm4
+
         return context
