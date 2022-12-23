@@ -1,6 +1,6 @@
 import numpy as np
 import scipy
-
+import sys
 
 class Waves:
     """
@@ -12,23 +12,21 @@ class Waves:
         self.rpeaks = rpeaks
 
     def waves_gradient(self):
-        first_deriv = np.gradient(self.data)  # 1st derivative
-        second_deriv = np.gradient(self.data)  # 2nd derivative
-        return first_deriv, second_deriv
+        grad1 = np.gradient(self.data)  # 1st derivative
+        grad2 = np.gradient(grad1)  # 2nd derivative
+        return grad1, grad2
 
-    def find_qrs_onsets(self, iter, deriv_2):
-        _, _, _, quarter4 = np.array_split(deriv_2[self.rpeaks[iter]:self.rpeaks[iter + 1]],4)  # first derivative from ech_baseline split in 4
+    def find_qrs_onsets(self, iter, grad2):
+        _, _, _, quarter4 = np.array_split(grad2[self.rpeaks[iter]:self.rpeaks[iter + 1]],indices_or_sections=4)  # split in 4
         try:
-            QRSon = quarter4
-            QRSon = np.where(QRSon[:np.argmin(QRSon)] < 0)[0][-2]
+            QRSon = np.where(quarter4[:np.argmin(quarter4)] < 0)[0][-2]
             QRSon = self.rpeaks[iter + 1] - len(quarter4) + QRSon
         except:
             return
         return int(QRSon)
 
-    def find_qrs_offsets(self, iter, deriv_2):
-        quarter1, _, _, _ = np.array_split(deriv_2[self.rpeaks[iter]:self.rpeaks[iter + 1]],4)  # first derivative from ech_baseline split in 4
-        QRSoff = quarter1
+    def find_qrs_offsets(self, iter, grad2):
+        QRSoff, _, _, _ = np.array_split(grad2[self.rpeaks[iter]:self.rpeaks[iter + 1]],4)  # split in 4
         try:
             half1, half2 = np.array_split(self.data[self.rpeaks[iter]:self.rpeaks[iter + 1]], 2)
             R1 = self.rpeaks[iter]
@@ -45,7 +43,7 @@ class Waves:
             return
         return int(QRSoff)
 
-    def find_t_offsets(self, iter, deriv_1, deriv_2, QRSoff):
+    def find_t_offsets(self, iter, grad1, grad2, QRSoff):
         half1, _ = np.array_split(self.data[self.rpeaks[iter]:self.rpeaks[iter + 1]], 2)  # ecg_baseline between 2 R peaks split in half
         try:
             region = self.data[QRSoff:QRSoff + len(half1)]
@@ -58,9 +56,9 @@ class Waves:
                 return
         except:
             return
-        quarter1, _, _, _ = np.array_split(deriv_2[self.rpeaks[iter]:self.rpeaks[iter + 1]],4)  # first derivative from ech_baseline split in 4
+        quarter1, _, _, _ = np.array_split(grad2[self.rpeaks[iter]:self.rpeaks[iter + 1]],4)  # first derivative from ech_baseline split in 4
         try:
-            dif_max, _ = scipy.signal.find_peaks(-deriv_1[T:T + len(quarter1)])
+            dif_max, _ = scipy.signal.find_peaks(-grad1[T:T + len(quarter1)])
             if dif_max.shape[0] != 0:
                 dif_max = np.min(dif_max)
                 Toffset = T + 3 * dif_max
@@ -84,10 +82,10 @@ class Waves:
             return
         return int(P)
 
-    def find_p_onsets(self, iter, deriv_1, P):
+    def find_p_onsets(self, iter, grad1, P):
         half1, _ = np.array_split(self.data[self.rpeaks[iter]:self.rpeaks[iter + 1]], 2)  # ecg_baseline between 2 R peaks split in half
         try:
-            dif_max, _ = scipy.signal.find_peaks(deriv_1[len(half1):P])
+            dif_max, _ = scipy.signal.find_peaks(grad1[len(half1):P])
             if dif_max.shape[0] != 0:
                 dif_max = np.max(dif_max)
                 Ponset = P - 2 * (P - len(half1) - dif_max)
@@ -97,9 +95,9 @@ class Waves:
             return
         return int(Ponset)
 
-    def find_p_offsets(self, deriv_1, P, QRSon):
+    def find_p_offsets(self, grad1, P, QRSon):
         try:
-            dif_max, _ = scipy.signal.find_peaks(-deriv_1[P:QRSon])
+            dif_max, _ = scipy.signal.find_peaks(-grad1[P:QRSon])
             if dif_max.shape[0] != 0:
                 dif_max = np.min(dif_max)
                 Poffset = P + 2 * dif_max
@@ -124,15 +122,15 @@ class Waves:
         ECG_P_Offsets = []
         ECG_T_Offsets = []
 
-        deriv_1, deriv_2 = self.waves_gradient()
+        grad1, grad2 = self.waves_gradient()
 
         for iter, _ in enumerate(self.rpeaks[:-1]):
-            QRSoff = self.find_qrs_offsets(iter, deriv_2)
-            QRSon = self.find_qrs_onsets(iter, deriv_2)
-            Toff = self.find_t_offsets(iter, deriv_1, deriv_2, QRSoff)
+            QRSoff = self.find_qrs_offsets(iter, grad2)
+            QRSon = self.find_qrs_onsets(iter, grad1)
+            Toff = self.find_t_offsets(iter, grad1, grad2, QRSoff)
             P = self.find_p_peaks(iter)
-            Pon = self.find_p_onsets(iter, deriv_1, P)
-            Poff = self.find_p_offsets(deriv_1, P, QRSon)
+            Pon = self.find_p_onsets(iter, grad1, P)
+            Poff = self.find_p_offsets(grad1, P, QRSon)
 
             ECG_QRS_Offsets.append(QRSoff)
             ECG_QRS_Onsets.append(QRSon)
