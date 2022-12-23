@@ -12,6 +12,7 @@ import numpy as np
 from scipy.fft import fft, ifft, fftfreq
 
 from ecg_baseline import BaselineECG
+from r_peaks import RPeaks
 
 class WavFileAdd(TemplateView, FormView):
     success_url = reverse_lazy('wav_list')
@@ -84,7 +85,8 @@ class WavlistView(TemplateView):
         algorytm1 = baseline.moving_average(10)
         algorytm2 = baseline.butterworth_filter([5, 30])
         algorytm3 = baseline.sav_goal_filter(10)
-        algorytm4 = 'Algorytm4'
+        peaks = RPeaks(algorytm1, data_dict)
+        algorytm4 = peaks.find_r_peaks(10, "pan tompkins")
 
         context['data'] = data
         context['algorytm1'] = algorytm1
