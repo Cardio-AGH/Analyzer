@@ -1,0 +1,5 @@
+numpy>=1.21
+matplotlib>=3.5.0
+wfdb>=3.4
+padasip
+plotly
