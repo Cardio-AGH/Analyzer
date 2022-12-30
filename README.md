@@ -1,6 +1,7 @@
 # Analyzer
 Akademicki projekt analizatora EKG realizowanego na przedmiocie "Dedykowane algorytmy diagnostyki medycznej"
 [<img width="1231" alt="image" src="https://user-images.githubusercontent.com/22752828/202790800-678b2c61-5350-4608-bb71-5b9b9a2401cf.png">](https://coggle.it/diagram/Y3fhb71Eo51jevuX/t/-/6821abec65cb3b7c8fe64d795b9845c34a429eb27f34f7e216be326823b10820)
+<img width="348" alt="image" src="https://user-images.githubusercontent.com/22752828/210072479-8b1378c2-1ad6-41ba-85e0-6bc8e585f10c.png">
 
 ## Onboarding
 <!-- [How to install and use pip on macOS ](https://gist.github.com/haircut/14705555d58432a5f01f9188006a04ed) -->
