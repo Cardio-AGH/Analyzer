@@ -14,6 +14,7 @@ from scipy.fft import fft, ifft, fftfreq
 from ecg_baseline import BaselineECG
 from r_peaks import RPeaks
 from waves import Waves
+from t_wave_alt import TWaweAlt
 
 class WavFileAdd(TemplateView, FormView):
     success_url = reverse_lazy('wav_list')
@@ -58,8 +59,6 @@ class WavFileDetailsView(TemplateView):
         print(len(flatten_data), len([round(i,2) for i in range(len(flatten_data))]))
         return context
 
-
-
 import numpy as np
 import wfdb
 from typing import Tuple
@@ -71,15 +70,12 @@ def load_data(path: str) -> Tuple[dict, np.array]:
 
   return data_dict, data_array
 
-
-
 class WavlistView(TemplateView):
     template_name = "wav_list.html"
 
     def get_context_data(self, **kwargs):
         context = super(WavlistView, self).get_context_data(**kwargs)
         context['wavs'] = Survey.objects.all()
-
 
         data_dict, data = load_data("twa00.hea")
         baseline = BaselineECG(data, data_dict)
@@ -91,11 +87,15 @@ class WavlistView(TemplateView):
         detect_waves = Waves(algorytm1, algorytm4)
         algorytm5 = detect_waves.main()
 
+        algorytm9 = TWaweAlt.findIn(data, algorytm5)
+
         context['data'] = data
         context['algorytm1'] = algorytm1
         context['algorytm2'] = algorytm2
         context['algorytm3'] = algorytm3
         context['algorytm4'] = algorytm4
         context['algorytm5'] = algorytm5
+
+        context['algorytm9'] = algorytm9
 
         return context
