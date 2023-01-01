@@ -1,7 +1,7 @@
 import numpy as np
 
 class DFA:
-    def main(self, r_peaks_data,json_params,windows=[4, 64]):
+    def main(self, r_peaks_data,json_params,windows=[4, 32]):
         """
          Args:
             r_peaks (np.ndarray): sample numbers of R-waves
@@ -13,39 +13,38 @@ class DFA:
         self.fs = json_params['fs'] / 1000
         self.data = r_peaks_data / self.fs
         self.rr_intervals = self.rr_diff(self.data)
-
         if self.rr_intervals.shape[0] < windows[1]:
             windows[1] = self.rr_intervals.shape[0]
 
-        if windows[0] <= 16 and windows[1] <= 64:
+        if windows[0] <= 8 and windows[1] <= 32:
             scales = np.concatenate(
                 (
-                    np.arange(windows[0], 16, 2),
-                    np.arange(16, windows[1] + 1, 4),
+                    np.arange(windows[0], 8, 1),
+                    np.arange(8, windows[1] + 1, 1),
                 ),
                 axis=0,
             )
-        elif windows[0] <= 16 and windows[1] > 64:
+        elif windows[0] <= 8 and windows[1] > 32:
             scales = np.concatenate(
                 (
-                    np.arange(windows[0], 16, 2),
-                    np.arange(16, 64, 4),
-                    np.arange(64, windows[1] + 1, 8)
+                    np.arange(windows[0], 8, 1),
+                    np.arange(8, 32, 1),
+                    np.arange(32, windows[1] + 1, 1)
                 ),
                 axis=0,
             )
-        elif windows[0] > 16 and windows[1] > 64:
+        elif windows[0] > 8 and windows[1] > 32:
             scales = np.concatenate(
                 (
-                    np.arange(windows[0], 64, 4),
-                    np.arange(64, windows[1] + 1, 8)
+                    np.arange(windows[0], 32, 1),
+                    np.arange(32, windows[1] + 1, 1)
                 ),
                 axis=0,
             )
         else:
-            scales = np.arange(windows[0], windows[1] + 1, 4)
+            scales = np.arange(windows[0], windows[1] + 1, 1)
 
-        ix = int(np.where(scales == windows[0] * 4)[0] + 1)
+        ix = int(np.where(scales == windows[0] * 2.5)[0] + 1)
         result = {
             "alpha_1": self.dfa(self.rr_intervals, scales[:ix]),
             "alpha_2": self.dfa(self.rr_intervals, scales[ix - 1:]),
@@ -122,6 +121,7 @@ class DFA:
             fluct (np.array): An array containing fluctuation values for each window size
         Returns:
             coeff (np.array): An array containing alpha coefficient
+            scales: tablica NumPy zawierająca rozmiary okien
         """
         return np.polyfit(np.log2(scales), np.log2(flucts), 1)
 
