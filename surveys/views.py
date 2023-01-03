@@ -15,6 +15,11 @@ from ecg_baseline import BaselineECG
 from r_peaks import RPeaks
 from waves import Waves
 
+from img_tool import matplotlib_to_base64
+# backend do matplotlib pozwalajacy na zapisywanie jako .png
+import matplotlib
+matplotlib.use('Agg')
+
 class WavFileAdd(TemplateView, FormView):
     success_url = reverse_lazy('wav_list')
     template_name = "survey_form.html"
@@ -67,9 +72,11 @@ from typing import Tuple
 def load_data(path: str) -> Tuple[dict, np.array]:
   path = path.strip('.hea')
   data_dict = wfdb.rdheader(path).__dict__
-  data_array = np.ravel(wfdb.rdrecord(path, physical=True, channels=[0]).adc())
+  record = wfdb.rdrecord(path, physical=True, channels=[0])
+  data_array = np.ravel(record.adc())
+  fig = wfdb.plot_wfdb(record=record, figsize=(20,3), return_fig=True)
 
-  return data_dict, data_array
+  return data_dict, data_array, fig
 
 
 
@@ -81,7 +88,8 @@ class WavlistView(TemplateView):
         context['wavs'] = Survey.objects.all()
 
 
-        data_dict, data = load_data("twa00.hea")
+        data_dict, data, data_fig = load_data("twa00.hea")
+        data_fig_base64 = matplotlib_to_base64(data_fig)
         baseline = BaselineECG(data, data_dict)
         algorytm1 = baseline.moving_average(10)
         algorytm2 = baseline.butterworth_filter([5, 30])
@@ -92,6 +100,7 @@ class WavlistView(TemplateView):
         algorytm5 = detect_waves.main()
 
         context['data'] = data
+        context['data_fig'] = data_fig_base64
         context['algorytm1'] = algorytm1
         context['algorytm2'] = algorytm2
         context['algorytm3'] = algorytm3
