@@ -14,8 +14,9 @@ from scipy.fft import fft, ifft, fftfreq
 from ecg_baseline import BaselineECG
 from r_peaks import RPeaks
 from waves import Waves
+from hrv1 import HRV1
 
-from img_tool import matplotlib_to_base64
+from img_tool import matplotlib_to_base64, plot, plot_waves
 # backend do matplotlib pozwalajacy na zapisywanie jako .png
 import matplotlib
 matplotlib.use('Agg')
@@ -74,8 +75,11 @@ def load_data(path: str) -> Tuple[dict, np.array]:
   data_dict = wfdb.rdheader(path).__dict__
   record = wfdb.rdrecord(path, physical=True, channels=[0])
   data_array = np.ravel(record.adc())
-  fig = wfdb.plot_wfdb(record=record, figsize=(20,3), return_fig=True)
-
+  fig = wfdb.plot_wfdb(record=record, figsize=(10,3), return_fig=True)
+  print('dict')
+  print(data_dict)
+  print('array')
+  print(data_array)
   return data_dict, data_array, fig
 
 
@@ -92,19 +96,23 @@ class WavlistView(TemplateView):
         data_fig_base64 = matplotlib_to_base64(data_fig)
         baseline = BaselineECG(data, data_dict)
         algorytm1 = baseline.moving_average(10)
+        fig1 = matplotlib_to_base64(plot(algorytm1))
         algorytm2 = baseline.butterworth_filter([5, 30])
         algorytm3 = baseline.sav_goal_filter(10)
         peaks = RPeaks(algorytm1, data_dict)
         algorytm4 = peaks.find_r_peaks(10, "pan tompkins")
         detect_waves = Waves(algorytm1, algorytm4)
         algorytm5 = detect_waves.main()
+        fig5 = matplotlib_to_base64(plot_waves(data, algorytm1, algorytm5))
 
         context['data'] = data
         context['data_fig'] = data_fig_base64
         context['algorytm1'] = algorytm1
+        context['fig1'] = fig1
         context['algorytm2'] = algorytm2
         context['algorytm3'] = algorytm3
         context['algorytm4'] = algorytm4
         context['algorytm5'] = algorytm5
+        context['fig5'] = fig5
 
         return context
